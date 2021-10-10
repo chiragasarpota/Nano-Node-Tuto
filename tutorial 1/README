@@ -1,0 +1,23 @@
+apt-get update
+ 
+apt-get upgrade
+ 
+apt install docker.io
+ 
+docker pull nanocurrency/nano:V22.1
+ 
+docker run --restart=unless-stopped -d   -p 7075:7075/udp   -p 7075:7075   -p 7076:7076   -p 7078:7078   -v ~:/root   --name nano-node   nanocurrency/nano:V22.1
+ 
+docker ps
+ 
+curl -d '{ "action" : "block_count" }' localhost:7076
+ 
+wget -O ledger.7z https://mynano.ninja/api/ledger/download -q --show-progress
+ 
+apt install p7zip
+ 
+p7zip -d ledger.7z
+ 
+mv data.ldb Nano/data.ldb
+ 
+docker restart nano-node
