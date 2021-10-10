@@ -4,3 +4,66 @@ docker rm nano-node
 
 docker run --restart=unless-stopped -d   -p 7075:7075/udp   -p 7075:7075   -p [::1]:7076:7076   -p [::1]:7078:7078   -v ~:/root   --name nano-node   nanocurrency/nano:V22.1
 
+apt install nodejs
+
+git clone https://github.com/Joohansson/NanoRPCProxy.git
+
+cd NanoRPCProxy
+
+npm install
+
+cp creds.json.default creds.json
+cp settings.json.default settings.json
+cp user_settings.json.default user_settings.json
+cp token_settings.json.default token_settings.json
+
+npm run build
+
+cd build
+
+npm install pm2@latest -g
+
+pm2 start proxy.js
+
+----------------------------------------------------
+
+Other useful pm2 commands:
+
+pm2 restart proxy.js, pm2 stop proxy.js, pm2 delete proxy.js
+Make pm2 auto-boot at server restart: pm2 startup
+Realtime online monitor: pm2 monitor
+Status: pm2 status
+Realtime logs: pm2 logs (or specifically for this app: pm2 logs proxy.js)
+Terminal dashboard: pm2 monit
+
+----------------------------------------------------
+
+cd ~/Nano
+
+vi config-node.toml
+
+[node]
+enable_voting = true
+
+[rpc]
+enable = true
+
+enable_control = true (Temporary control required set to false after creating account)
+
+
+
+Add a Representative Account to a wallet:
+
+Use wallet_create RPC
+One of the following:
+wallet_add RPC
+Verify the account is in the wallet with account_list
+
+Open the account:
+
+    Send some funds to the account, at least 0.01 Nano
+    Use search_pending to make the wallet open the account automatically
+    Use account_info to verify the state of the account
+
+
+docker restart nano-node
